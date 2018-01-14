@@ -1,6 +1,8 @@
 package com.avs.controllers.v1;
 
 import com.avs.api.v1.model.CustomerDTO;
+import com.avs.controllers.RestResponseEntityExceptionHandler;
+import com.avs.exceptions.ResourceNotFoundException;
 import com.avs.services.CustomerService;
 import org.junit.Test;
 
@@ -41,7 +43,9 @@ public class CustomerControllerTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        mockMvc = MockMvcBuilders.standaloneSetup(customerController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(customerController)
+                .setControllerAdvice(new RestResponseEntityExceptionHandler())
+                .build();
     }
 
     @Test
@@ -164,5 +168,15 @@ public class CustomerControllerTest {
         verify(customerService).deleteCustomerById(anyLong());
     }
 
+
+    @Test
+    public void testNotFoundException() throws Exception {
+
+        when(customerService.getCustomerById(anyLong())).thenThrow(ResourceNotFoundException.class);
+
+        mockMvc.perform(get("/api/v1/customers/" + "222")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
 
 }

@@ -3,6 +3,7 @@ package com.avs.services;
 import com.avs.api.v1.mapper.CustomerMapper;
 import com.avs.api.v1.model.CustomerDTO;
 import com.avs.domain.Customer;
+import com.avs.exceptions.ResourceNotFoundException;
 import com.avs.repositories.CustomerRepository;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +37,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         return customerRepository.findById(id)
                 .map(customerMapper::customerToCustomerDTO)
-                .orElseThrow(RuntimeException::new); //todo implement better exception handling
+                .orElseThrow(ResourceNotFoundException::new); //todo implement better exception handling
     }
 
     @Override
@@ -64,6 +65,7 @@ public class CustomerServiceImpl implements CustomerService {
         return saveAndReturnDTO(customer);
     }
 
+
     @Override
     public CustomerDTO patchCustomer(Long id, CustomerDTO customerDTO) {
         return customerRepository.findById(id).map(customer -> {
@@ -82,10 +84,17 @@ public class CustomerServiceImpl implements CustomerService {
 
             return returnDto;
 
-        }).orElseThrow(RuntimeException::new); //todo implement better exception handling;
+        }).orElseThrow(ResourceNotFoundException::new);
     }
+
+
     @Override
     public void deleteCustomerById(Long id) {
-        customerRepository.deleteById(id);
+        try {
+            customerRepository.deleteById(id);
+        }catch (ResourceNotFoundException e){
+            System.out.println(e.getMessage());
+        }
+
     }
 }
