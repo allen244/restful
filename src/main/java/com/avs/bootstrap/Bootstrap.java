@@ -2,8 +2,10 @@ package com.avs.bootstrap;
 
 import com.avs.domain.Category;
 import com.avs.domain.Customer;
+import com.avs.domain.Vendor;
 import com.avs.repositories.CategoryRepository;
 import com.avs.repositories.CustomerRepository;
+import com.avs.repositories.VendorRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -12,10 +14,14 @@ public class Bootstrap implements CommandLineRunner {
 
     public CategoryRepository categoryRepository;
     public CustomerRepository customerRepository;
+    public VendorRepository vendorRepository;
 
-    public Bootstrap(CategoryRepository categoryRepository, CustomerRepository customerRepository) {
+
+
+    public Bootstrap(CategoryRepository categoryRepository, CustomerRepository customerRepository, VendorRepository vendorRepository) {
         this.categoryRepository = categoryRepository;
         this.customerRepository = customerRepository;
+        this.vendorRepository = vendorRepository;
     }
 
     @Override
@@ -25,6 +31,26 @@ public class Bootstrap implements CommandLineRunner {
 
 
         loadCustomers();
+
+        loadVedors();
+    }
+
+    private void loadVedors() {
+        Vendor vendor = new Vendor();
+        vendor.setName("hello");
+
+        Vendor vendor1 = new Vendor();
+        vendor1.setName("hello222");
+
+        Vendor vendor2 = new Vendor();
+        vendor2.setName("hello33");
+
+        vendorRepository.save(vendor);
+
+        vendorRepository.save(vendor1);
+        vendorRepository.save(vendor2);
+
+        System.out.println("Data Loaded vendorRepository = " + vendorRepository.count() );
     }
 
     private void loadCategories() {
